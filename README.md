@@ -1,2 +1,2 @@
 # SOA
-AGHSOA course 
+AGH SOA course 
