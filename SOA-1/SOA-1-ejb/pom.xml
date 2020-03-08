@@ -127,11 +127,18 @@
         </dependency>
 
         <dependency>
-            <groupId>org.jboss.security</groupId>
-            <artifactId>jboss-security-spi</artifactId>
-            <version>3.0.0.Beta4</version>
-            <type>pom</type>
+            <groupId>jboss</groupId>
+            <artifactId>jboss-annotations-ejb3</artifactId>
+            <version>4.2.2.GA</version>
+            <scope>provided</scope>
         </dependency>
+
+        <dependency>
+            <groupId>org.jboss.ws</groupId>
+            <artifactId>jbossws-api</artifactId>
+            <version>1.0.1.Final</version>
+        </dependency>
+
 
     </dependencies>
 
