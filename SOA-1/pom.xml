@@ -36,6 +36,7 @@
         <module>SOA-1-ejb</module>
         <module>SOA-1-web</module>
         <module>SOA-1-ear</module>
+        <module>SOA-1-connector</module>
     </modules>
 
     <properties>
@@ -75,6 +76,13 @@
             <dependency>
                 <groupId>pl.edu.agh.soa.lab1</groupId>
                 <artifactId>SOA-1-ejb</artifactId>
+                <version>${project.version}</version>
+                <type>ejb</type>
+            </dependency>
+
+            <dependency>
+                <groupId>pl.edu.agh.soa.lab1</groupId>
+                <artifactId>SOA-1-connector</artifactId>
                 <version>${project.version}</version>
                 <type>ejb</type>
             </dependency>
