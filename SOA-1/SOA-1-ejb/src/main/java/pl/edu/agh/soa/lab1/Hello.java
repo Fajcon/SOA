@@ -15,7 +15,7 @@ import javax.jws.soap.SOAPBinding;
 @WebService
 @SecurityDomain("cxfservice-security-domain")
 @DeclareRoles({"TestRole"})
-@WebContext(contextRoot="/SOA-1", urlPattern="/*", authMethod="BASIC",transportGuarantee="NONE", secureWSDLAccess = false)
+@WebContext(contextRoot="/SOA-1", urlPattern="/Hello", authMethod="BASIC",transportGuarantee="NONE", secureWSDLAccess = false)
 @SOAPBinding(style=SOAPBinding.Style.RPC)
 public class Hello {
     @RolesAllowed("TestRole")
