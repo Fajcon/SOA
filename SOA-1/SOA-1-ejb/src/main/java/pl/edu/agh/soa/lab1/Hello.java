@@ -16,7 +16,6 @@ import javax.jws.soap.SOAPBinding;
 @SecurityDomain("my-security-domain")
 @DeclareRoles({"TestRole"})
 @WebContext(contextRoot="/SOA-1", urlPattern="/Hello", authMethod="BASIC",transportGuarantee="NONE", secureWSDLAccess = false)
-@SOAPBinding(style=SOAPBinding.Style.RPC)
 public class Hello {
     @RolesAllowed("TestRole")
     @WebMethod(action = "greet_sb")
