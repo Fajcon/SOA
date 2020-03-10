@@ -126,6 +126,7 @@
             <scope>test</scope>               
         </dependency>
 
+        <!-- Authorization -->
         <dependency>
             <groupId>jboss</groupId>
             <artifactId>jboss-annotations-ejb3</artifactId>
@@ -139,6 +140,13 @@
             <version>1.0.1.Final</version>
         </dependency>
 
+        <!--  Lombok  -->
+        <dependency>
+            <groupId>org.projectlombok</groupId>
+            <artifactId>lombok</artifactId>
+            <version>1.18.12</version>
+            <scope>provided</scope>
+        </dependency>
 
     </dependencies>
 
