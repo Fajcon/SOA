@@ -15,7 +15,7 @@ import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
 import java.io.*;
-import java.util.Collections;
+import java.util.Arrays;
 
 @Stateless
 @WebService
@@ -30,7 +30,7 @@ public class LegoSetController {
         ObjectMapper mapper = new ObjectMapper();
         LegoSet legoSet = new LegoSet();
         try {
-            legoSet = mapper.readValue(new File(String.valueOf(no)), LegoSet.class);
+            legoSet = mapper.readValue(new File("legoSet" + no), LegoSet.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -42,18 +42,19 @@ public class LegoSetController {
     @WebResult(name = "addLegoSets")
     public Long addLegoSets(@WebParam(name = "name") String name, @WebParam(name = "boxGraphic") String boxGraphicBase64, @WebParam(name = "SetNumber") Long setNumber) {
         LegoBlock legoBlock = new LegoBlock("red", 1234, "long4");
+        LegoBlock legoBlock2 = new LegoBlock("blue", 4321, "long1");
+
         LegoSet legoSet = new LegoSet
                 .LegoSetBuilder()
                 .legoSetNumber(setNumber)
                 .name(name)
                 .boxGraphicBase64(boxGraphicBase64)
-                .legoPacks(Collections.singletonList(new LegoPack(legoBlock, 5L)))
+                .legoPacks(Arrays.asList(new LegoPack(legoBlock, 5L), new LegoPack(legoBlock2, 4L)))
                 .build();
         ObjectMapper mapper = new ObjectMapper();
         try {
             String jsonString = mapper.writeValueAsString(legoSet);
-            System.out.println(jsonString);
-            FileOutputStream outputStream = new FileOutputStream(String.valueOf(legoSet.getLegoSetNumber()));
+            FileOutputStream outputStream = new FileOutputStream("legoSet" + legoSet.getLegoSetNumber());
             byte[] strToBytes = jsonString.getBytes();
             outputStream.write(strToBytes);
             outputStream.close();

@@ -25,7 +25,7 @@
         <version>1.0-SNAPSHOT</version>
     </parent>
 
-    <artifactId>SOA-1-ear</artifactId>
+    <artifactId>jficon-zad1</artifactId>
     <packaging>ear</packaging>
 
     <name>SOA-1: EAR Module</name>

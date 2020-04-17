@@ -33,10 +33,10 @@
         </license>
     </licenses>
     <modules>
-        <module>SOA-1-ejb</module>
+        <module>soap-api</module>
         <module>SOA-1-web</module>
         <module>SOA-1-ear</module>
-        <module>SOA-1-connector</module>
+        <module>soap-connector</module>
     </modules>
 
     <properties>
