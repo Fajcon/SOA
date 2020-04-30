@@ -4,8 +4,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.jboss.annotation.security.SecurityDomain;
 import org.jboss.ws.api.annotation.WebContext;
 import pl.edu.agh.soa.lab1.exceptions.SetNotFoundException;
-import pl.edu.agh.soa.lab1.model.LegoBlock;
-import pl.edu.agh.soa.lab1.model.LegoPack;
 
 import javax.annotation.security.DeclareRoles;
 import javax.annotation.security.RolesAllowed;

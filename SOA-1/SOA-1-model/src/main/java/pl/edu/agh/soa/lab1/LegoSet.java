@@ -2,7 +2,10 @@ package pl.edu.agh.soa.lab1;
 
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonProperty;
-import lombok.*;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlElementWrapper;
@@ -13,16 +16,14 @@ import java.util.List;
 @NoArgsConstructor
 @ToString
 public class LegoSet {
+    @JsonProperty
     private Long legoSetNumber;
+    @JsonProperty
     private String name;
+    @JsonProperty
     private String boxGraphicBase64;
+    @JsonProperty
     private List<LegoPack> legoPacks;
-
-    @XmlElementWrapper(name = "legoPacks")
-    @XmlElement(name = "legoPack")
-    public List<LegoPack> getLegoPacks() {
-        return legoPacks;
-    }
 
     @JsonCreator
     public LegoSet(@JsonProperty(value = "legoSetNumber", required = true)Long legoSetNumber,

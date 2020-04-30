@@ -1,0 +1,84 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+   xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+   <modelVersion>4.0.0</modelVersion>
+
+   <parent>
+      <artifactId>SOA-1</artifactId>
+      <groupId>pl.edu.agh.soa.lab1</groupId>
+      <version>1.0-SNAPSHOT</version>
+   </parent>
+
+   <artifactId>SOA-1-web</artifactId>
+   <packaging>war</packaging>
+
+   <name>SOA-1: WAR Module</name>
+
+   <dependencies>
+      <!-- Import the EJB API, we use provided scope as the API is included in JBoss AS 7 -->
+      <dependency>
+         <groupId>org.jboss.spec.javax.ejb</groupId>
+         <artifactId>jboss-ejb-api_3.2_spec</artifactId>
+         <scope>provided</scope>
+      </dependency>
+
+      <!-- Import the CDI API, we use provided scope as the API is included in JBoss AS 7 -->
+      <dependency>
+         <groupId>javax.enterprise</groupId>
+         <artifactId>cdi-api</artifactId>
+         <scope>provided</scope>
+      </dependency>
+
+      <!-- Java EE 7 API -->
+      <dependency>
+         <groupId>javax</groupId>
+         <artifactId>javaee-api</artifactId>
+         <version>7.0</version>
+         <scope>provided</scope>
+      </dependency>
+
+      <dependency>
+         <groupId>javax.el</groupId>
+         <artifactId>javax.el-api</artifactId>
+         <version>3.0.0</version>
+      </dependency>
+
+      <!-- others -->
+      <dependency>
+         <groupId>org.projectlombok</groupId>
+         <artifactId>lombok</artifactId>
+         <version>1.18.12</version>
+         <scope>provided</scope>
+      </dependency>
+      <dependency>
+         <groupId>pl.edu.agh.soa.lab1</groupId>
+         <artifactId>SOA-1-model</artifactId>
+         <version>1.0-SNAPSHOT</version>
+         <scope>compile</scope>
+      </dependency>
+
+   </dependencies>
+
+   <build>
+      <finalName>${project.artifactId}</finalName>
+      <plugins>
+         <plugin>
+            <artifactId>maven-war-plugin</artifactId>
+            <version>${version.war.plugin}</version>
+            <configuration>
+               <!-- Java EE 7 doesn't require web.xml, Maven needs to catch up! -->
+               <failOnMissingWebXml>false</failOnMissingWebXml>
+            </configuration>
+         </plugin>
+         <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-compiler-plugin</artifactId>
+            <configuration>
+               <source>11</source>
+               <target>11</target>
+            </configuration>
+         </plugin>
+      </plugins>
+   </build>
+
+</project>

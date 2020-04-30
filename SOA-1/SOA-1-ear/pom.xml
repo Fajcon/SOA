@@ -61,7 +61,6 @@
                     <groupId>com.sun.xml.ws</groupId>
                     <artifactId>release-documentation</artifactId>
                 </exclusion>
-
             </exclusions>
         </dependency>
     </dependencies>

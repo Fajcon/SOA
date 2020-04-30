@@ -33,8 +33,9 @@
         </license>
     </licenses>
     <modules>
+        <module>SOA-1-model</module>
         <module>soap-api</module>
-        <module>SOA-1-web</module>
+        <module>rest-api</module>
         <module>SOA-1-ear</module>
         <module>soap-connector</module>
     </modules>
