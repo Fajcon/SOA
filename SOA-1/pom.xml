@@ -38,6 +38,7 @@
         <module>rest-api</module>
         <module>SOA-1-ear</module>
         <module>soap-connector</module>
+        <module>rest-connector</module>
     </modules>
 
     <properties>

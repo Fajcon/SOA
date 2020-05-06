@@ -6,8 +6,6 @@ import javax.servlet.ServletConfig;
 import javax.ws.rs.ApplicationPath;
 import javax.ws.rs.core.Application;
 import javax.ws.rs.core.Context;
-import java.util.HashSet;
-import java.util.Set;
 
 
 @ApplicationPath("/api")
@@ -24,12 +22,4 @@ public class LegoSetApp extends Application {
         beanConfig.setScan(true);
     }
 
-    public Set<Class<?>> getClasses() {
-        Set<Class<?>> resources = new HashSet<>();
-        resources.add(Hello.class);
-        resources.add(LegoSetController.class);
-        resources.add(io.swagger.jaxrs.listing.ApiListingResource.class);
-        resources.add(io.swagger.jaxrs.listing.SwaggerSerializers.class);
-        return resources;
-    }
 }
