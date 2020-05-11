@@ -12,26 +12,16 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import protobuf.LegoSetsProtoBuf.LegoSetId;
+import protobuf.LegoSetsProtoBuf.LegoSetsIdProtoBuf;
 
 @Path("/LegoSet")
 @Api(value = "/LegoSet")
 @ApplicationScoped
 public class LegoSetController {
-
-
     List<LegoSet> legoSets = new ArrayList<LegoSet>();
-    Long maxNumber = 1L;
+    Long maxNumber = 0L;
     public LegoSetController() {
-        LegoBlock legoBlock = new LegoBlock("red", 1234, "long4");
-        LegoBlock legoBlock2 = new LegoBlock("blue", 4321, "long1");
-        LegoSet legoSet = new LegoSet
-                .LegoSetBuilder()
-                .legoSetNumber(maxNumber)
-                .name("test")
-                .boxGraphicBase64("test")
-                .legoPacks(Arrays.asList(new LegoPack(legoBlock, 5L), new LegoPack(legoBlock2, 4L)))
-                .build();
-        legoSets.add(legoSet);
     }
 
     @GET
@@ -47,8 +37,9 @@ public class LegoSetController {
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("No LegoSet found with the setNumber: " + setNumber));
         } catch (IllegalArgumentException exception){
-            return Response.
-                    status(Response.Status.NOT_FOUND)
+            return Response
+                    .ok()
+                    .status(Response.Status.NOT_FOUND)
                     .header("Access-Control-Allow-Origin", "*")
                     .header("Access-Control-Allow-Methods", "GET")
                     .build();
@@ -80,22 +71,68 @@ public class LegoSetController {
     @JWTTokenNeeded
     @Produces(MediaType.APPLICATION_JSON)
     public Response addLegoSet(@QueryParam("name") String name, @QueryParam("boxGraphic") String boxGraphicBase64) {
-        LegoBlock legoBlock = new LegoBlock("red", 1234, "long4");
-        LegoBlock legoBlock2 = new LegoBlock("blue", 4321, "long1");
         LegoSet legoSet = new LegoSet
                 .LegoSetBuilder()
                 .legoSetNumber(maxNumber+=1)
                 .name(name)
                 .boxGraphicBase64(boxGraphicBase64)
-                .legoPacks(Arrays.asList(new LegoPack(legoBlock, 5L), new LegoPack(legoBlock2, 4L)))
+                .legoPacks(new ArrayList<>())
                 .build();
         legoSets.add(legoSet);
         System.out.println(legoSets.size());
         return Response
                 .ok()
+                .status(Response.Status.CREATED)
                 .entity(maxNumber)
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "POST")
+                .build();
+    }
+
+    @PUT
+    @Path("/{legoSetId}")
+    @JWTTokenNeeded
+    @Produces(MediaType.APPLICATION_JSON)
+    public Response addLegoBlock(@PathParam("legoSetId") Long setNumber, @QueryParam("color") String color, @QueryParam("partNumber") Long partNumber, @QueryParam("name") String name){
+        LegoSet legoSet;
+        try {
+            legoSet = legoSets
+                    .stream()
+                    .filter(l -> l.getLegoSetNumber().equals(setNumber))
+                    .findFirst()
+                    .orElseThrow(() -> new IllegalArgumentException("No LegoSet found with the setNumber: " + setNumber));
+        } catch (IllegalArgumentException exception){
+            return Response
+                    .status(Response.Status.NOT_FOUND)
+                    .header("Access-Control-Allow-Origin", "*")
+                    .header("Access-Control-Allow-Methods", "PUT")
+                    .build();
+        }
+        LegoBlock legoBlock = new LegoBlock(color, partNumber, name);
+        legoSet.setLegoPacks(Arrays.asList(new LegoPack(legoBlock, 5L)));
+        return Response
+                .ok()
+                .status(Response.Status.OK)
+                .entity(legoSet)
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Methods", "PUT")
+                .build();
+    }
+
+    @GET
+    @Path("/setsId")
+    @Produces("application/protobuf")
+    public Response getSetsId() {
+        LegoSetsIdProtoBuf.Builder legoSetsIdProtoBufBuilder = LegoSetsIdProtoBuf.newBuilder();
+        legoSets.forEach(legoSet -> legoSetsIdProtoBufBuilder
+                .addLegoSetId(LegoSetId.newBuilder().setLegoSetId(Math.toIntExact(legoSet.getLegoSetNumber())))
+                .build()
+        );
+        LegoSetsIdProtoBuf legoSetsIdProtoBuf = legoSetsIdProtoBufBuilder.build();
+        return Response
+                .ok(legoSetsIdProtoBuf)
+                .header("Access-Control-Allow-Origin", "*")
+                .header("Access-Control-Allow-Methods", "GET")
                 .build();
     }
 }

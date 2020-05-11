@@ -74,6 +74,12 @@
          <version>0.9.1</version>
       </dependency>
 
+      <!--Protocol Buffers-->
+      <dependency>
+         <groupId>com.google.protobuf</groupId>
+         <artifactId>protobuf-java</artifactId>
+         <version>3.12.0-rc-1</version>
+      </dependency>
 
    </dependencies>
 
@@ -119,7 +125,7 @@
                      </resources>
                   </configuration>
                </execution>
-            </executions>
+            </executions>rea
          </plugin>
          <plugin>
             <groupId>com.google.code.maven-replacer-plugin</groupId>

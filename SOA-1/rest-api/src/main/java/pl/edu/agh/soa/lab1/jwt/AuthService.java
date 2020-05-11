@@ -61,7 +61,7 @@ public class AuthService {
     }
 
     private boolean authenticate(String login, String password) throws SecurityException {
-        if ("ninja".equals(login) && "ninja".equals(password)) {
+        if ("login".equals(login) && "password".equals(password)) {
             return true;
         } else {
             throw new SecurityException("Invalid user/password");

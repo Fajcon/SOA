@@ -1,0 +1,15 @@
+syntax = "proto2";
+
+package pl.edu.agh.soa.lab1;
+
+option java_package = "protobuf";
+option java_outer_classname = "LegoSetsProtoBuf";
+
+message LegoSetId {
+    required int32 legoSetId = 1;
+
+}
+
+message LegoSetsIdProtoBuf {
+    repeated LegoSetId legoSetId = 1;
+}
