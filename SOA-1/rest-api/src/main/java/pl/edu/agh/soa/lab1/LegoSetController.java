@@ -12,6 +12,7 @@ import javax.ws.rs.core.Response;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+
 import protobuf.LegoSetsProtoBuf.LegoSetId;
 import protobuf.LegoSetsProtoBuf.LegoSetsIdProtoBuf;
 
@@ -56,6 +57,7 @@ public class LegoSetController {
     @GET
     @Path("")
     @Produces(MediaType.APPLICATION_JSON)
+    @ApiResponses({@ApiResponse(code=200, message="Success")})
     public Response getLegoSet() throws Exception {
         return Response
                 .ok()
@@ -70,6 +72,7 @@ public class LegoSetController {
     @Path("")
     @JWTTokenNeeded
     @Produces(MediaType.APPLICATION_JSON)
+    @ApiResponses({@ApiResponse(code=201, message="Created")})
     public Response addLegoSet(@QueryParam("name") String name, @QueryParam("boxGraphic") String boxGraphicBase64) {
         LegoSet legoSet = new LegoSet
                 .LegoSetBuilder()
@@ -93,6 +96,7 @@ public class LegoSetController {
     @Path("/{legoSetId}")
     @JWTTokenNeeded
     @Produces(MediaType.APPLICATION_JSON)
+    @ApiResponses({@ApiResponse(code=200, message="Success"), @ApiResponse(code=404, message="Not Found")})
     public Response addLegoBlock(@PathParam("legoSetId") Long setNumber, @QueryParam("color") String color, @QueryParam("partNumber") Long partNumber, @QueryParam("name") String name){
         LegoSet legoSet;
         try {
@@ -119,9 +123,13 @@ public class LegoSetController {
                 .build();
     }
 
+    /**
+     * Example endpoint for protocol buffer.
+     */
     @GET
     @Path("/setsId")
     @Produces("application/protobuf")
+    @ApiResponses({@ApiResponse(code=200, message="Success")})
     public Response getSetsId() {
         LegoSetsIdProtoBuf.Builder legoSetsIdProtoBufBuilder = LegoSetsIdProtoBuf.newBuilder();
         legoSets.forEach(legoSet -> legoSetsIdProtoBufBuilder

@@ -2,6 +2,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import pl.edu.agh.soa.lab1.LegoSet;
+import protobuf.LegoSetsProtoBuf;
 
 import javax.ws.rs.client.Client;
 import javax.ws.rs.client.ClientBuilder;
@@ -28,6 +29,7 @@ public class ApiClient {
         apiClient.getLegoSetById(1L);
         apiClient.addLegoBlock(1L, "red", 1234L, "long_4", token);
         apiClient.getLegoSetById(1L);
+        apiClient.getProtoBufId();
     }
 
     public void getLegoSets(){
@@ -92,9 +94,19 @@ public class ApiClient {
                 .queryParam("partNumber", partNumber)
                 .queryParam("name", name);
         Response response = target.request().header("Authorization", token).put(null);
-        String value = response.readEntity(String.class);
-        System.out.println(value);
         response.close();
+    }
+
+    public void getProtoBufId(){
+        Client client = ClientBuilder.newBuilder().register(WidgetProtocMessageBodyProvider.class).build();
+        WebTarget target = client.target("http://localhost:8080/SOA-1-web/api/LegoSet/setsId");
+        LegoSetsProtoBuf.LegoSetsIdProtoBuf legoSetsIdProtoBuf = target
+                .request()
+                .get(LegoSetsProtoBuf.LegoSetsIdProtoBuf.class);
+        for(LegoSetsProtoBuf.LegoSetId legoSetId : legoSetsIdProtoBuf.getLegoSetIdList()){
+            System.out.println(legoSetId.getLegoSetId());
+        }
+
     }
 
     public String fileToBase64(String path) throws IOException {
@@ -104,7 +116,7 @@ public class ApiClient {
 
     public void base64ToFile(String imgBase64) throws IOException {
         byte[] decodedImg = Base64.getDecoder().decode(imgBase64.getBytes(StandardCharsets.UTF_8));
-        Path destinationFile = Paths.get("SOA-1-model/src/main/resources/responseImage.jpeg");
+        Path destinationFile = Paths.get("rest-connector/src/main/resources/responseImage.jpeg");
         Files.write(destinationFile, decodedImg);
     }
 
