@@ -1,19 +1,19 @@
 package pl.edu.agh.soa.lab1;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "kanapka", schema = "public")
-@Setter
-@Getter
+@Table(name = "kanapka")
+@Data
 public class Kanapka {
 
     @Id
-    @GeneratedValue
-    public Long kanapkaId;
-    public String name;
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column
+    private int id;
+    @Column
+    private String name;
 
 }

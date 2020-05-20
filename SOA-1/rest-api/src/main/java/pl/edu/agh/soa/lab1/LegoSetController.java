@@ -84,7 +84,9 @@ public class LegoSetController {
 //                .legoPacks(new ArrayList<>())
                 .build();
         legoSets.add(legoSet);
-        legoSetDAO.addKanapka();
+        legoSetDAO.getKanapka();
+
+//        legoSetDAO.addKanapka();
 //        legoSetDAO.addLegoSet(legoSet);
         return Response
                 .ok()
