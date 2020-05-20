@@ -5,12 +5,12 @@ import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
 import pl.edu.agh.soa.lab1.jwt.JWTTokenNeeded;
 
+import javax.ejb.EJB;
 import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 
 import protobuf.LegoSetsProtoBuf.LegoSetId;
@@ -20,6 +20,8 @@ import protobuf.LegoSetsProtoBuf.LegoSetsIdProtoBuf;
 @Api(value = "/LegoSet")
 @ApplicationScoped
 public class LegoSetController {
+    @EJB
+    LegoSetDAO legoSetDAO = new LegoSetDAO();
     List<LegoSet> legoSets = new ArrayList<LegoSet>();
     Long maxNumber = 0L;
     public LegoSetController() {
@@ -79,10 +81,11 @@ public class LegoSetController {
                 .legoSetNumber(maxNumber+=1)
                 .name(name)
                 .boxGraphicBase64(boxGraphicBase64)
-                .legoPacks(new ArrayList<>())
+//                .legoPacks(new ArrayList<>())
                 .build();
         legoSets.add(legoSet);
-        System.out.println(legoSets.size());
+        legoSetDAO.addKanapka();
+//        legoSetDAO.addLegoSet(legoSet);
         return Response
                 .ok()
                 .status(Response.Status.CREATED)
@@ -113,7 +116,7 @@ public class LegoSetController {
                     .build();
         }
         LegoBlock legoBlock = new LegoBlock(color, partNumber, name);
-        legoSet.setLegoPacks(Arrays.asList(new LegoPack(legoBlock, 5L)));
+//        legoSet.setLegoPacks(Arrays.asList(new LegoPack(legoBlock, 5L)));
         return Response
                 .ok()
                 .status(Response.Status.OK)

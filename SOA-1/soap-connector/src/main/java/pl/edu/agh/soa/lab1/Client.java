@@ -16,7 +16,7 @@ public class Client {
         } catch (URISyntaxException e) {
             e.printStackTrace();
         }
-        LegoSet legoSet = getLegoSet(321L, legoSetController);
+        LegoSetSoap legoSet = getLegoSet(321L, legoSetController);
         clientUtilities.showLegoSet(legoSet);
         legoSet = getLegoSet(123L, legoSetController);
         clientUtilities.showLegoSet(legoSet);
@@ -35,9 +35,9 @@ public class Client {
         legoSetController.addLegoSets("myName2", base64Img, 321L);
     }
 
-    private static LegoSet getLegoSet(Long legoSetNumber, LegoSetController legoSetController){
+    private static LegoSetSoap getLegoSet(Long legoSetNumber, LegoSetController legoSetController){
         ClientUtilities clientUtilities = new ClientUtilities();
-        LegoSet response = new LegoSet();
+        LegoSetSoap response = new LegoSetSoap();
         try {
             response = legoSetController.getLegoSetByNumber(legoSetNumber);
             clientUtilities.base64ToFile(response.boxGraphicBase64);

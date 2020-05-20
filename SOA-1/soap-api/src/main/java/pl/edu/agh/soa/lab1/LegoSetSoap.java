@@ -12,7 +12,7 @@ import java.util.List;
 @Data
 @NoArgsConstructor
 @ToString
-public class LegoSet {
+public class LegoSetSoap {
     private Long legoSetNumber;
     private String name;
     private String boxGraphicBase64;
@@ -25,10 +25,10 @@ public class LegoSet {
     }
 
     @JsonCreator
-    public LegoSet(@JsonProperty(value = "legoSetNumber", required = true)Long legoSetNumber,
-                   @JsonProperty(value = "name", required = true)String name,
-                   @JsonProperty(value = "boxGraphicBase64", required = true)String boxGraphicBase64,
-                   @JsonProperty(value = "legoPacks")List<LegoPack> legoPacks) {
+    public LegoSetSoap(@JsonProperty(value = "legoSetNumber", required = true)Long legoSetNumber,
+                       @JsonProperty(value = "name", required = true)String name,
+                       @JsonProperty(value = "boxGraphicBase64", required = true)String boxGraphicBase64,
+                       @JsonProperty(value = "legoPacks")List<LegoPack> legoPacks) {
         this.legoSetNumber = legoSetNumber;
         this.name = name;
         this.boxGraphicBase64 = boxGraphicBase64;

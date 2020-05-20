@@ -13,7 +13,6 @@ import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
 import java.io.*;
-import java.util.Arrays;
 
 @Stateless
 @WebService
@@ -24,15 +23,15 @@ public class LegoSetController {
     @RolesAllowed("TestRole")
     @WebMethod(action = "find")
     @WebResult(name = "getLegoSet")
-    public LegoSet getLegoSetByNumber(@WebParam(name = "number") Long no) throws SetNotFoundException {
+    public LegoSetSoap getLegoSetByNumber(@WebParam(name = "number") Long no) throws SetNotFoundException {
         ObjectMapper mapper = new ObjectMapper();
-        LegoSet legoSet = new LegoSet();
+        LegoSetSoap legoSetSoap = new LegoSetSoap();
         try {
-            legoSet = mapper.readValue(new File("legoSet" + no), LegoSet.class);
+            legoSetSoap = mapper.readValue(new File("legoSet" + no), LegoSetSoap.class);
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return legoSet;
+        return legoSetSoap;
     }
 
     @RolesAllowed("TestRole")
@@ -42,23 +41,23 @@ public class LegoSetController {
         LegoBlock legoBlock = new LegoBlock("red", 1234, "long4");
         LegoBlock legoBlock2 = new LegoBlock("blue", 4321, "long1");
 
-        LegoSet legoSet = new LegoSet
-                .LegoSetBuilder()
+        LegoSetSoap legoSetSoap = new LegoSetSoap
+                .LegoSetSoapBuilder()
                 .legoSetNumber(setNumber)
                 .name(name)
                 .boxGraphicBase64(boxGraphicBase64)
-                .legoPacks(Arrays.asList(new LegoPack(legoBlock, 5L), new LegoPack(legoBlock2, 4L)))
+//                .legoPacks(Arrays.asList(new LegoPack(legoBlock, 5L), new LegoPack(legoBlock2, 4L)))
                 .build();
         ObjectMapper mapper = new ObjectMapper();
         try {
-            String jsonString = mapper.writeValueAsString(legoSet);
-            FileOutputStream outputStream = new FileOutputStream("legoSet" + legoSet.getLegoSetNumber());
+            String jsonString = mapper.writeValueAsString(legoSetSoap);
+            FileOutputStream outputStream = new FileOutputStream("legoSet" + legoSetSoap.getLegoSetNumber());
             byte[] strToBytes = jsonString.getBytes();
             outputStream.write(strToBytes);
             outputStream.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
-        return legoSet.getLegoSetNumber();
+        return legoSetSoap.getLegoSetNumber();
     }
 }

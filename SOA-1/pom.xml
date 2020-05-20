@@ -18,6 +18,14 @@
 <project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <name>SOA-1</name>
+    <dependencies>
+        <dependency>
+            <groupId>javax</groupId>
+            <artifactId>javaee-api</artifactId>
+            <version>7.0</version>
+            <scope>compile</scope>
+        </dependency>
+    </dependencies>
     <modelVersion>4.0.0</modelVersion>
     <groupId>pl.edu.agh.soa.lab1</groupId>
     <artifactId>SOA-1</artifactId>
@@ -34,11 +42,13 @@
     </licenses>
     <modules>
         <module>SOA-1-model</module>
+        <module>SOA-1-jpa</module>
         <module>soap-api</module>
         <module>rest-api</module>
         <module>SOA-1-ear</module>
         <module>soap-connector</module>
         <module>rest-connector</module>
+        <module>SOA-1-dao</module>
     </modules>
 
     <properties>
@@ -121,6 +131,13 @@
                 <version>${version.jboss.bom}</version>
                 <type>pom</type>
                 <scope>import</scope>
+            </dependency>
+
+            <dependency>
+                <groupId>org.hibernate.javax.persistence</groupId>
+                <artifactId>hibernate-jpa-2.1-api</artifactId>
+                <version>1.0.2.Final</version>
+                <scope>provided</scope>
             </dependency>
 
         </dependencies>

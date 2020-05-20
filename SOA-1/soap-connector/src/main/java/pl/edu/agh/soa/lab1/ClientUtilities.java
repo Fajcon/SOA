@@ -29,7 +29,7 @@ public class ClientUtilities {
         Files.write(destinationFile, decodedImg);
     }
 
-    public void showLegoSet(LegoSet legoSet){
+    public void showLegoSet(LegoSetSoap legoSet){
         legoSet.setBoxGraphicBase64("*****");
         ObjectMapper mapper = new ObjectMapper();
         try {
