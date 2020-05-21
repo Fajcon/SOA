@@ -22,7 +22,7 @@ import protobuf.LegoSetsProtoBuf.LegoSetsIdProtoBuf;
 public class LegoSetController {
     @EJB
     LegoSetDAO legoSetDAO = new LegoSetDAO();
-    List<LegoSet> legoSets = new ArrayList<LegoSet>();
+    List<LegoSetDao> legoSets = new ArrayList<LegoSetDao>();
     Long maxNumber = 0L;
     public LegoSetController() {
     }
@@ -32,7 +32,7 @@ public class LegoSetController {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiResponses({@ApiResponse(code=200, message="Success"), @ApiResponse(code=404, message="Not Found")})
     public Response getLegoSet(@PathParam("legoSetId") Long setNumber) throws Exception {
-        LegoSet legoSet;
+        LegoSetDao legoSet;
         try {
             legoSet = legoSets
                     .stream()
@@ -76,7 +76,7 @@ public class LegoSetController {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiResponses({@ApiResponse(code=201, message="Created")})
     public Response addLegoSet(@QueryParam("name") String name, @QueryParam("boxGraphic") String boxGraphicBase64) {
-        LegoSet legoSet = new LegoSet
+        LegoSetDao legoSet = new LegoSetDao
                 .LegoSetBuilder()
                 .legoSetNumber(maxNumber+=1)
                 .name(name)
@@ -84,9 +84,9 @@ public class LegoSetController {
 //                .legoPacks(new ArrayList<>())
                 .build();
         legoSets.add(legoSet);
-        legoSetDAO.getKanapka();
-
-//        legoSetDAO.addKanapka();
+        legoSetDAO.addKanapka();
+        Kanapka kanapka = legoSetDAO.getKanapka();
+        System.out.println(kanapka.getName());
 //        legoSetDAO.addLegoSet(legoSet);
         return Response
                 .ok()
@@ -103,7 +103,7 @@ public class LegoSetController {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiResponses({@ApiResponse(code=200, message="Success"), @ApiResponse(code=404, message="Not Found")})
     public Response addLegoBlock(@PathParam("legoSetId") Long setNumber, @QueryParam("color") String color, @QueryParam("partNumber") Long partNumber, @QueryParam("name") String name){
-        LegoSet legoSet;
+        LegoSetDao legoSet;
         try {
             legoSet = legoSets
                     .stream()
@@ -117,7 +117,7 @@ public class LegoSetController {
                     .header("Access-Control-Allow-Methods", "PUT")
                     .build();
         }
-        LegoBlock legoBlock = new LegoBlock(color, partNumber, name);
+        LegoBlockDao legoBlockDao = new LegoBlockDao(color, partNumber, name);
 //        legoSet.setLegoPacks(Arrays.asList(new LegoPack(legoBlock, 5L)));
         return Response
                 .ok()

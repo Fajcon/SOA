@@ -15,7 +15,7 @@ public class LegoBlock {
     @JsonProperty
     private String color;
     @JsonProperty
-    private long partNumber;
+    private Long partNumber;
 
     @JsonCreator
     public LegoBlock(@JsonProperty(value = "color", required = true)String color,
