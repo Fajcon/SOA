@@ -1,19 +1,15 @@
 package pl.edu.agh.soa.lab1;
 
-import lombok.*;
+import lombok.Data;
 
 import javax.persistence.*;
 
 @Entity
-@Table(name = "kanapka")
+@Table(name = "LegoBlock")
 @Data
-public class Kanapka {
-
+public class LegoBlockEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column
-    private int id;
-    @Column
-    private String name;
-
+    private Long legoBlockid;
+    private String color;
 }

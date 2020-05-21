@@ -13,6 +13,7 @@ import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
 import java.io.*;
+import java.util.Arrays;
 
 @Stateless
 @WebService
@@ -38,15 +39,15 @@ public class LegoSetController {
     @WebMethod(action = "add")
     @WebResult(name = "addLegoSets")
     public Long addLegoSets(@WebParam(name = "name") String name, @WebParam(name = "boxGraphic") String boxGraphicBase64, @WebParam(name = "SetNumber") Long setNumber) {
-        LegoBlock legoBlock = new LegoBlock("red", 1234, "long4");
-        LegoBlock legoBlock2 = new LegoBlock("blue", 4321, "long1");
+        LegoBlock legoBlock = new LegoBlock("red", 1234L);
+        LegoBlock legoBlock2 = new LegoBlock("blue", 4321L);
 
         LegoSetSoap legoSetSoap = new LegoSetSoap
                 .LegoSetSoapBuilder()
                 .legoSetNumber(setNumber)
                 .name(name)
                 .boxGraphicBase64(boxGraphicBase64)
-//                .legoPacks(Arrays.asList(new LegoPack(legoBlock, 5L), new LegoPack(legoBlock2, 4L)))
+                .legoPacks(Arrays.asList(new LegoPack(legoBlock, 5L), new LegoPack(legoBlock2, 4L)))
                 .build();
         ObjectMapper mapper = new ObjectMapper();
         try {
@@ -60,4 +61,6 @@ public class LegoSetController {
         }
         return legoSetSoap.getLegoSetNumber();
     }
+
+
 }

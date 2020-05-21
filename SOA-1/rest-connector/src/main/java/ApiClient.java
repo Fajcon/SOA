@@ -2,6 +2,7 @@ import org.jboss.resteasy.client.jaxrs.ResteasyClient;
 import org.jboss.resteasy.client.jaxrs.ResteasyClientBuilder;
 import org.jboss.resteasy.client.jaxrs.ResteasyWebTarget;
 import pl.edu.agh.soa.lab1.LegoSet;
+import pl.edu.agh.soa.lab1.Storage;
 import protobuf.LegoSetsProtoBuf;
 
 import javax.ws.rs.client.Client;
@@ -27,33 +28,77 @@ public class ApiClient {
         apiClient.addLegoSet("test", "/lego123.jpeg", token);
         apiClient.getLegoSets();
         apiClient.getLegoSetById(1L);
-        apiClient.addLegoBlock(1L, "red", 1234L, "long_4", token);
+        apiClient.addLegoBlock(1L, "red", 1234L, token);
         apiClient.getLegoSetById(1L);
         apiClient.getProtoBufId();
+
+        apiClient.addStorage("testowy_magazyn", token, 1L);
+        apiClient.addLegoSetToStorage(1L, 2L, token);
+        apiClient.getStorageById(1L);
+
+        apiClient.getStorageByName("testowy_magazyn");
     }
 
-    public void getLegoSets(){
+    public void getLegoSets() {
         Client client = ClientBuilder.newClient();
         WebTarget target = client.target("http://localhost:8080/SOA-1-web/api/LegoSet");
-        List<LegoSet> legoSetList = target.request(MediaType.APPLICATION_JSON).get(new GenericType<List<LegoSet>>() {});
+        List<LegoSet> legoSetList = target.request(MediaType.APPLICATION_JSON).get(new GenericType<List<LegoSet>>() {
+        });
         client.close();
         System.out.println(legoSetList.toString());
     }
 
-    public void getLegoSetById(Long legoSetId){
+    public void getStorageByName(String name) {
         Client client = ClientBuilder.newClient();
-        WebTarget target = client.target("http://localhost:8080/SOA-1-web/api/LegoSet/");
-        LegoSet legoSet = target.path(String.valueOf(legoSetId)).request(MediaType.APPLICATION_JSON).get(LegoSet.class);
-        client.close();
-        try {
-            base64ToFile(legoSet.getBoxGraphicBase64());
-        } catch (IOException e) {
-            e.printStackTrace();
+        Response response = client.target("http://localhost:8080/SOA-1-web/api/Storage/byName/")
+                .path(String.valueOf(name))
+                .request(MediaType.APPLICATION_JSON)
+                .get();
+        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+            List<Storage> storages = response.readEntity(new GenericType<List<Storage>>() {});
+            client.close();
+            System.out.println(storages.toString());
+        } else {
+            System.out.println("Error: " + response.getStatus());
         }
-        System.out.println(legoSet.toString());
     }
 
-    public String getToken(String login, String password){
+    public void getLegoSetById(Long legoSetId) {
+        Client client = ClientBuilder.newClient();
+        Response response = client.target("http://localhost:8080/SOA-1-web/api/LegoSet/")
+                .path(String.valueOf(legoSetId))
+                .request(MediaType.APPLICATION_JSON)
+                .get();
+        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+            LegoSet legoSet = response.readEntity(LegoSet.class);
+            client.close();
+            try {
+                base64ToFile(legoSet.getBoxGraphicBase64());
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+            System.out.println(legoSet.toString());
+        } else {
+            System.out.println("Error: " + response.getStatus());
+        }
+    }
+
+    public void getStorageById(Long storageId) {
+        Client client = ClientBuilder.newClient();
+        Response response = client.target("http://localhost:8080/SOA-1-web/api/Storage/")
+                .path(String.valueOf(storageId))
+                .request(MediaType.APPLICATION_JSON)
+                .get();
+        if (response.getStatus() == Response.Status.OK.getStatusCode()) {
+            Storage storage = response.readEntity(Storage.class);
+            client.close();
+            System.out.println(storage.toString());
+        } else {
+            System.out.println("Error: " + response.getStatus());
+        }
+    }
+
+    public String getToken(String login, String password) {
         Client client = ClientBuilder.newClient();
         WebTarget target = client.target("http://localhost:8080/SOA-1-web/api/auth/login");
         Form form = new Form();
@@ -77,33 +122,49 @@ public class ApiClient {
         }
         ResteasyClient client = new ResteasyClientBuilder().build();
         ResteasyWebTarget target = client.target("http://localhost:8080/SOA-1-web/api/LegoSet")
-                        .queryParam("name", name)
-                        .queryParam("boxGraphic", base64Img);
+                .queryParam("name", name)
+                .queryParam("boxGraphic", base64Img);
 
         Response response = target.request().header("Authorization", token).post(null);
-        String value = response.readEntity(String.class);
-        System.out.println(value);
         response.close();
     }
 
-    public void addLegoBlock(Long legoSetId, String color, Long partNumber, String name,String token){
+    public void addStorage(String name, String token, Long legoSetId){
+        ResteasyClient client = new ResteasyClientBuilder().build();
+        ResteasyWebTarget target = client.target("http://localhost:8080/SOA-1-web/api/Storage")
+                .queryParam("name", name)
+                .queryParam("legoSetId", legoSetId);
+        Response response = target.request().header("Authorization", token).post(null);
+        response.close();
+    }
+
+
+    public void addLegoBlock(Long legoSetId, String color, Long partNumber, String token) {
         ResteasyClient client = new ResteasyClientBuilder().build();
         ResteasyWebTarget target = client.target("http://localhost:8080/SOA-1-web/api/LegoSet/")
                 .path(String.valueOf(legoSetId))
                 .queryParam("color", color)
-                .queryParam("partNumber", partNumber)
-                .queryParam("name", name);
+                .queryParam("partNumber", partNumber);
         Response response = target.request().header("Authorization", token).put(null);
         response.close();
     }
 
-    public void getProtoBufId(){
+    public void addLegoSetToStorage(Long legoSetId, Long storageId, String token){
+        ResteasyClient client = new ResteasyClientBuilder().build();
+        ResteasyWebTarget target = client.target("http://localhost:8080/SOA-1-web/api/Storage/")
+                .path(String.valueOf(storageId))
+                .queryParam("legoSetId", legoSetId);
+        Response response = target.request().header("Authorization", token).put(null);
+        response.close();
+    }
+
+    public void getProtoBufId() {
         Client client = ClientBuilder.newBuilder().register(WidgetProtocMessageBodyProvider.class).build();
         WebTarget target = client.target("http://localhost:8080/SOA-1-web/api/LegoSet/setsId");
         LegoSetsProtoBuf.LegoSetsIdProtoBuf legoSetsIdProtoBuf = target
                 .request()
                 .get(LegoSetsProtoBuf.LegoSetsIdProtoBuf.class);
-        for(LegoSetsProtoBuf.LegoSetId legoSetId : legoSetsIdProtoBuf.getLegoSetIdList()){
+        for (LegoSetsProtoBuf.LegoSetId legoSetId : legoSetsIdProtoBuf.getLegoSetIdList()) {
             System.out.println(legoSetId.getLegoSetId());
         }
 
@@ -119,5 +180,4 @@ public class ApiClient {
         Path destinationFile = Paths.get("rest-connector/src/main/resources/responseImage.jpeg");
         Files.write(destinationFile, decodedImg);
     }
-
 }
