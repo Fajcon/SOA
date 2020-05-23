@@ -10,7 +10,13 @@ import javax.enterprise.context.ApplicationScoped;
 import javax.ws.rs.*;
 import javax.ws.rs.core.MediaType;
 import javax.ws.rs.core.Response;
+import java.io.File;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
+import java.nio.file.Files;
+import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Base64;
 import java.util.List;
 
 import protobuf.LegoSetsProtoBuf.LegoSetId;
@@ -21,7 +27,7 @@ import protobuf.LegoSetsProtoBuf.LegoSetsIdProtoBuf;
 @ApplicationScoped
 public class LegoSetController {
     @EJB
-    LegoSetDAO legoSetDAO = new LegoSetDAO();
+    LegoSetDao legoSetDao = new LegoSetDao();
     List<LegoSet> legoSets = new ArrayList<LegoSet>();
     Long maxNumber = 0L;
     public LegoSetController() {
@@ -34,18 +40,19 @@ public class LegoSetController {
     public Response getLegoSet(@PathParam("legoSetId") Long setNumber) throws Exception {
         LegoSet legoSet;
         try {
-            legoSet = legoSets
-                    .stream()
-                    .filter(l -> l.getLegoSetNumber().equals(setNumber))
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("No LegoSet found with the setNumber: " + setNumber));
-        } catch (IllegalArgumentException exception){
+            legoSet = legoSetDao.find(setNumber);
+        } catch (Exception exception){
             return Response
                     .ok()
                     .status(Response.Status.NOT_FOUND)
                     .header("Access-Control-Allow-Origin", "*")
                     .header("Access-Control-Allow-Methods", "GET")
                     .build();
+        }
+        try {
+            legoSet.setBoxGraphicBase64(fileToBase64(legoSet.getImgPath()));
+        } catch (IOException e) {
+            e.printStackTrace();
         }
         return Response
                 .ok()
@@ -61,9 +68,10 @@ public class LegoSetController {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiResponses({@ApiResponse(code=200, message="Success")})
     public Response getLegoSet() throws Exception {
+        List<LegoSet> result = legoSetDao.findAll();
         return Response
                 .ok()
-                .entity(legoSets)
+                .entity(result)
                 .status(Response.Status.OK)
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "GET")
@@ -76,22 +84,24 @@ public class LegoSetController {
     @Produces(MediaType.APPLICATION_JSON)
     @ApiResponses({@ApiResponse(code=201, message="Created")})
     public Response addLegoSet(@QueryParam("name") String name, @QueryParam("boxGraphic") String boxGraphicBase64) {
+        try {
+            base64ToFile(boxGraphicBase64, name);
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
         LegoSet legoSet = new LegoSet
                 .LegoSetBuilder()
                 .legoSetNumber(maxNumber+=1)
                 .name(name)
                 .boxGraphicBase64(boxGraphicBase64)
-//                .legoPacks(new ArrayList<>())
+                .imgPath(name)
+                .legoPacks(new ArrayList<>())
                 .build();
         legoSets.add(legoSet);
-        legoSetDAO.getKanapka();
-
-//        legoSetDAO.addKanapka();
-//        legoSetDAO.addLegoSet(legoSet);
+        legoSetDao.save(legoSet);
         return Response
                 .ok()
                 .status(Response.Status.CREATED)
-                .entity(maxNumber)
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "POST")
                 .build();
@@ -102,23 +112,21 @@ public class LegoSetController {
     @JWTTokenNeeded
     @Produces(MediaType.APPLICATION_JSON)
     @ApiResponses({@ApiResponse(code=200, message="Success"), @ApiResponse(code=404, message="Not Found")})
-    public Response addLegoBlock(@PathParam("legoSetId") Long setNumber, @QueryParam("color") String color, @QueryParam("partNumber") Long partNumber, @QueryParam("name") String name){
+    public Response addLegoBlock(@PathParam("legoSetId") Long setNumber, @QueryParam("color") String color, @QueryParam("partNumber") Long partNumber){
         LegoSet legoSet;
         try {
-            legoSet = legoSets
-                    .stream()
-                    .filter(l -> l.getLegoSetNumber().equals(setNumber))
-                    .findFirst()
-                    .orElseThrow(() -> new IllegalArgumentException("No LegoSet found with the setNumber: " + setNumber));
-        } catch (IllegalArgumentException exception){
+            legoSet = legoSetDao.find(setNumber);
+        } catch (Exception exception){
             return Response
+                    .ok()
                     .status(Response.Status.NOT_FOUND)
                     .header("Access-Control-Allow-Origin", "*")
-                    .header("Access-Control-Allow-Methods", "PUT")
+                    .header("Access-Control-Allow-Methods", "GET")
                     .build();
         }
-        LegoBlock legoBlock = new LegoBlock(color, partNumber, name);
-//        legoSet.setLegoPacks(Arrays.asList(new LegoPack(legoBlock, 5L)));
+        LegoBlock legoBlock = new LegoBlock(color, partNumber);
+        legoSet.getLegoPacks().add(new LegoPack(legoBlock, 5L));
+        legoSetDao.update(legoSet);
         return Response
                 .ok()
                 .status(Response.Status.OK)
@@ -147,5 +155,16 @@ public class LegoSetController {
                 .header("Access-Control-Allow-Origin", "*")
                 .header("Access-Control-Allow-Methods", "GET")
                 .build();
+    }
+
+    public void base64ToFile(String imgBase64, String imgPath) throws IOException {
+        byte[] decodedImg = Base64.getDecoder().decode(imgBase64.getBytes(StandardCharsets.UTF_8));
+        java.nio.file.Path destinationFile = Paths.get(imgPath);
+        Files.write(destinationFile, decodedImg);
+    }
+
+    public String fileToBase64(String path) throws IOException {
+        byte[] fileContent = Files.readAllBytes(new File(path).toPath());
+        return Base64.getEncoder().encodeToString(fileContent);
     }
 }
