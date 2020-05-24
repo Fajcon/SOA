@@ -33,7 +33,7 @@ public class ApiClient {
         apiClient.getProtoBufId();
 
         apiClient.addStorage("testowy_magazyn", token, 1L);
-        apiClient.addLegoSetToStorage(1L, 2L, token);
+        apiClient.addLegoSetToStorage(1L, 1L, token);
         apiClient.getStorageById(1L);
 
         apiClient.getStorageByName("testowy_magazyn");
